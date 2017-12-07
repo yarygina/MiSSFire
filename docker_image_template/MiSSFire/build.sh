@@ -1,0 +1,1 @@
+docker build -t tya1/missfire .

@@ -1,0 +1,103 @@
+version: '2.0'
+services:
+  ############################################################################
+  #  Functional services
+  ############################################################################
+  #
+  # Entry point - API gateway
+  #
+  apigateway:
+    build: ./apigateway
+    # expose:
+    #  - "80"
+    ports:
+      - "80:80"
+    links:
+     - users
+     - accounts
+     - transactions
+     - payment
+    depends_on:
+     - payment
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+  #
+  # Users management service
+  #
+  users:
+    build: ./users
+    ports:
+     - "9081:80"
+    volumes:
+     - usersvol:/usersvol
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+  #
+  # Accounts management service
+  #
+  accounts:
+    build: ./accounts
+    ports:
+     - "9082:80"
+    volumes:
+     - accountsvol:/accountsvol
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+  #
+  # Transactions management service
+  #
+  transactions:
+    build: ./transactions
+    ports:
+     - "9083:80"
+    volumes:
+     - transactionsvol:/transactionsvol
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+  #
+  # Payment management service
+  #
+  payment:
+    build: ./payment
+    ports:
+     - "9084:80"
+    volumes:
+     - paymentsvol:/paymentsvol
+    links:
+     - users
+     - accounts
+     - transactions
+    depends_on:
+     - users
+     - accounts
+     - transactions
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+
+
+##############################################################################
+#  Data volumes
+##############################################################################
+volumes:
+  usersvol: {}
+  accountsvol: {}
+  transactionsvol: {}
+  paymentsvol: {}
+
+
+

@@ -1,0 +1,7 @@
+Flask==0.10.1
+Flask-SQLAlchemy==2.1 
+SQLAlchemy-migrate==0.10.0
+requests==2.5.1
+wsgiref==0.1.2
+gunicorn
+gevent
