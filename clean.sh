@@ -1,1 +1,0 @@
-find . \( -name "*.pyc" -o -name "*.key" -o -name "*.csr" -o -name "*.crt" -o -name "*.pem" -o -name "*.old" -o -name "*.attr" -o -name "index.txt" -o -name "serial.txt" -o -name "logging.conf" \) -type f -print0 | xargs -0 /bin/rm -f

@@ -1,0 +1,37 @@
+HOME            = .
+RANDFILE        = $ENV::HOME/.rnd
+
+####################################################################
+[ req ]
+default_bits       = 2048
+default_keyfile    = servicekey.pem
+distinguished_name = service_distinguished_name
+req_extensions     = service_req_extensions
+string_mask        = utf8only
+
+####################################################################
+[ service_distinguished_name ]
+countryName         = NO
+stateOrProvinceName = Hordaland
+localityName = Bergen
+organizationName    = UiB
+organizationalUnitName  = Department of Informatics
+commonName = UserAuthTokenService
+emailAddress  = test@example.com
+
+####################################################################
+[ service_req_extensions ]
+
+subjectKeyIdentifier = hash
+basicConstraints     = CA:FALSE
+keyUsage             = digitalSignature, keyEncipherment
+subjectAltName       = @alternate_names
+nsComment            = "OpenSSL Generated Certificate"
+
+####################################################################
+[ alternate_names ]
+
+DNS.1  = 0.0.0.0
+DNS.2  = www.example.com
+DNS.3  = mail.example.com
+DNS.4  = ftp.example.com

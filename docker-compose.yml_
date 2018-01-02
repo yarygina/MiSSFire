@@ -1,0 +1,148 @@
+version: '2.0'
+services:
+  ############################################################################
+  #  Functional services
+  ############################################################################
+  #
+  # Entry point - API gateway
+  #
+  apigateway:
+    build: ./apigateway
+    ports:
+      - "80:80"
+    links:
+     - users
+     - accounts
+     - transactions
+     - payment
+     - ca
+     - reversests
+    depends_on:
+     - payment
+     - ca
+     - reversests
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+  #
+  # Users management service
+  #
+  users:
+    build: ./users
+    ports:
+     - "9081:80"
+    volumes:
+     - usersvol:/usersvol
+    links:
+     - ca
+     - reversests
+    depends_on:
+     - ca
+     - reversests
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+  #
+  # Accounts management service
+  #
+  accounts:
+    build: ./accounts
+    ports:
+     - "9082:80"
+    volumes:
+     - accountsvol:/accountsvol
+    links:
+     - ca
+     - reversests
+    depends_on:
+     - ca
+     - reversests
+    environment:
+     - MTLS=True
+     - TOKEN=True
+     - SERVICE_DEBUG=True
+     - FLASK_DEBUG=True
+  #
+  # Transactions management service
+  #
+  transactions:
+    build: ./transactions
+    ports:
+     - "9083:80"
+    volumes:
+     - transactionsvol:/transactionsvol
+    links:
+     - ca
+     - reversests
+    depends_on:
+     - ca
+     - reversests
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+  #
+  # Payment management service
+  #
+  payment:
+    build: ./payment
+    ports:
+     - "9084:80"
+    volumes:
+     - paymentsvol:/paymentsvol
+    links:
+     - users
+     - accounts
+     - transactions
+     - ca
+     - reversests
+    depends_on:
+     - users
+     - accounts
+     - transactions
+     - ca
+     - reversests
+    environment:
+      - MTLS=True
+      - TOKEN=True
+      - SERVICE_DEBUG=True
+      - FLASK_DEBUG=True
+
+  ############################################################################
+  #  Security infrastructure services
+  ############################################################################
+  #
+  # Certificate Authority (CA) service
+  #
+  ca:
+    build: ./ca
+    ports:
+     - "8080:80"
+  #
+  # Reverse Security Token Service (STS) service
+  #
+  reversests:
+    build: ./reversests
+    ports:
+     - "8081:80"
+    links:
+     - ca
+    depends_on:
+     - ca
+
+##############################################################################
+#  Data volumes
+##############################################################################
+volumes:
+  usersvol: {}
+  accountsvol: {}
+  transactionsvol: {}
+  paymentsvol: {}
+
+
+

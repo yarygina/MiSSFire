@@ -1,0 +1,3 @@
+[submodule "MicroBank"]
+	path = MicroBank
+	url = https://github.com/yarygina/MicroBank.git
