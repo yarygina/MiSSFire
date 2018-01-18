@@ -256,13 +256,20 @@ class Requests():
     """
     def __init__(self):
         self.latestToken = ""
+        self.s = requests.Session()
         if getEnvVar('TOKEN', False):
             self.securityToken = SecurityToken(logger, DEBUG)
+        else:
+            self.securityToken = None
         if getEnvVar('MTLS', False):
             serviceCert = ServiceCert(logger, serviceType, DEBUG)
             self.serviceCertFileName = serviceCert.getServiceCertFileName()
             self.serviceKeyFileName = serviceCert.getServiceKeyFileName()
-            self.caCertFileName = serviceCert.getCaCertFileName()                    
+            self.caCertFileName = serviceCert.getCaCertFileName()
+
+            self.s.cert = (self.serviceCertFileName, self.serviceKeyFileName)
+            self.s.verify = self.caCertFileName
+
 
     def format(self, *args, **kwargs):
         if self.securityToken:
@@ -273,19 +280,17 @@ class Requests():
             else:
                 logger.warning("'self.latestToken' in memory is empty.")
 
-        if self.serviceCertFileName:
-            kwargs['cert'] = (self.serviceCertFileName, self.serviceKeyFileName)
-            kwargs['verify'] = self.caCertFileName
+        kwargs['allow_redirects'] = False
+        kwargs['stream'] = False
         return (args, kwargs)
 
     def get(self, *args, **kwargs):
         (newArgs, newKwargs) = self.format(*args, **kwargs)
-        return requests.get(*newArgs, **newKwargs)
+        return self.s.get(*newArgs, **newKwargs)
 
     def post(self, *args,**kwargs):
         (newArgs, newKwargs) = self.format(*args, **kwargs)
-        return requests.post(*newArgs, **newKwargs)
-
+        return self.s.post(*newArgs, **newKwargs)
 
 
 # MTLS certificates should be in place before Gunicorn web server starts.  
